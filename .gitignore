@@ -1,8 +1,20 @@
-ios/build/*
-android/build/*
-android/dist
+# Global
 
-.DS_Store
+build/
+tmp/
 *.zip
-*.xcuserdatad
+
+# iOS
+
+ios/DerivedData/
+xcuserdata/
 *.xccheckout
+
+# Android
+
+android/dist/
+android/build-local.properties
+android/libs
+
+!android/build/docs/
+!android/libs/.gitkeep
