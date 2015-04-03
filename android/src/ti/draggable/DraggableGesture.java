@@ -59,7 +59,6 @@ public class DraggableGesture implements OnTouchListener
 	protected WeakReference<ConfigProxy> config;
 	protected VelocityTracker velocityTracker;
 	protected ViewConfiguration vc;
-	protected int threshold;
 	protected double lastX = 0;
 	protected double lastY = 0;
 	protected double distanceX = 0;
@@ -75,28 +74,47 @@ public class DraggableGesture implements OnTouchListener
 		this.draggableProxy = proxy;
 		this.draggableView = view;
 		this.vc = ViewConfiguration.get(this.draggableView.getOuterView().getContext());
-		this.threshold = vc.getScaledPagingTouchSlop();
 		this.config = config;
+
+		ConfigProxy config_ = this.getConfig();
+
+		if(config_ != null) {
+			config_.threshold = vc.getScaledPagingTouchSlop();
+		}
 
 		this.prepareMappedProxies();
 	}
 
 	public void determineDrag(MotionEvent event)
 	{
+		ConfigProxy config = this.getConfig();
+		KrollDict configProps = config.getProperties();
+
+		Object thresholdObj = config.getProperty("threshold");
+		int threshold = thresholdObj != null ? TiConvert.toInt(thresholdObj) : vc.getScaledPagingTouchSlop();
+
+		boolean xAxis = ! configProps.isNull("axis") && configProps.getString("axis").equals("x");
+		boolean yAxis = ! configProps.isNull("axis") && configProps.getString("axis").equals("y");
+
 		double xDelta = Math.abs(event.getRawX() - this.lastX);
 		double yDelta = Math.abs(event.getRawY() - this.lastY);
 
-		this.isBeingDragged = xDelta > this.threshold || yDelta > this.threshold;
+		if(xAxis) {
+			this.isBeingDragged = xDelta > threshold;
+		}
+		else if(yAxis)
+		{
+			this.isBeingDragged = yDelta > threshold;
+		}
+		else
+		{
+			this.isBeingDragged = xDelta > threshold || yDelta > threshold;
+		}
 	}
 
 	@Override
 	public boolean onTouch(View view, MotionEvent event) {
 		ConfigProxy config = this.getConfig();
-
-		if (TiConvert.toBoolean(config.getProperty("enabled")) == false)
-		{
-			return false;
-		}
 
 		if (! this.isBeingDragged && event.getAction() == MotionEvent.ACTION_MOVE)
 		{
@@ -122,6 +140,11 @@ public class DraggableGesture implements OnTouchListener
 				this.stopDrag(event);
 				break;
 			case MotionEvent.ACTION_MOVE:
+				if (TiConvert.toBoolean(config.getProperty("enabled")) == false)
+				{
+					return false;
+				}
+
 				this.drag(event);
 				break;
 		}
