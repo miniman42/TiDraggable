@@ -110,7 +110,7 @@ public class ConfigProxy extends KrollProxy implements KrollProxyListener
 			applyProperties(args[0]);
 		}
 	}
-	
+
 	@Kroll.method
 	@Kroll.getProperty
 	public int getDefaultThreshold()
