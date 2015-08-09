@@ -245,8 +245,8 @@ public class DraggableGesture implements OnTouchListener
 
 			this.setViewPosition(draggableProxy, viewToDrag, (float) topEdge, (float) leftEdge, ensureBottomValue, ensureRightValue);
 
-			distanceX += Math.abs(lastLeft - leftEdge);
-			distanceY += Math.abs(lastTop - topEdge);
+			distanceX += (lastLeft - leftEdge);
+			distanceY += (lastTop - topEdge);
 			lastLeft = leftEdge;
 			lastTop = topEdge;
 
