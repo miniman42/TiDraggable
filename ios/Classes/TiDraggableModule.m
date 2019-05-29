@@ -38,7 +38,7 @@
 #import <objc/message.h>
 #import "TiDraggableModule.h"
 #import "TiDraggableGesture.h"
-#import "TiUIiOSNavWindowProxy.h"
+//#import "TiUINavigationWindowProxy.h"
 
 @implementation TiDraggableModule
 
@@ -66,7 +66,7 @@
 
     if (proxy)
     {
-        [[TiDraggableGesture alloc] initWithProxy:proxy andOptions:options];
+        [[TiDraggableGesture alloc] initWithProxy:proxy andOptions:options withDelegate:self];
     }
 }
 
@@ -74,12 +74,12 @@
 {
     TiViewProxy* proxy = nil;
 
-    if ([name isEqualToString:@"createNavigationWindow"])
-    {
-        proxy = [[[TiUIiOSNavWindowProxy alloc] _initWithPageContext:[self executionContext] args:args] autorelease];
-    }
-    else
-    {
+//    if ([name isEqualToString:@"createNavigationWindow"])
+//    {
+//        proxy = [[[TiUINavigationWindowProxy alloc] _initWithPageContext:[self executionContext] args:args] autorelease];
+//    }
+//    else
+//    {
         Ivar nameLookupIvar = class_getInstanceVariable([super class], "classNameLookup");
         CFMutableDictionaryRef cnLookup = (CFMutableDictionaryRef) object_getIvar(self, nameLookupIvar);
         Class resultClass = (Class) CFDictionaryGetValue(cnLookup, name);
@@ -108,16 +108,32 @@
         }
 
         proxy = [[[resultClass alloc] _initWithPageContext:context args:args] autorelease];
-    }
+//    }
 
     if (proxy)
     {
         NSDictionary* options = [proxy valueForKeyPath:@"draggableConfig"];
 
-        [[TiDraggableGesture alloc] initWithProxy:proxy andOptions:options];
+        [[TiDraggableGesture alloc] initWithProxy:proxy andOptions:options withDelegate:self];
     }
 
     return proxy;
+}
+
+#pragma TiDraggableGestureDelegate
+
+- (void)fireGlobalEvent:(NSString *)eventName withObject:(NSDictionary*)eventData
+{
+    if ([self _hasListeners:eventName]) {
+        [self fireEvent:eventName withObject:eventData];
+    }
+}
+ 
+- (void)fireGlobalEvent:(NSString *)eventName withObject:(NSDictionary*)eventData withSource:(id)source
+{
+    if ([self _hasListeners:eventName]) {
+        [self fireEvent:eventName withObject:eventData withSource:source];
+    }
 }
 
 @end

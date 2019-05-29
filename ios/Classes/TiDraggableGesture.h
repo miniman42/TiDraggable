@@ -39,17 +39,32 @@
 #import "TiUIView.h"
 #import "TiViewProxy.h"
 
+
+
+@class TiDraggableGesture;
+
+@protocol TiDraggableGestureDelegate <NSObject>
+
+@optional
+- (void)fireGlobalEvent:(NSString *)eventName withObject:(NSDictionary*)eventData;
+- (void)fireGlobalEvent:(NSString *)eventName withObject:(NSDictionary*)eventData withSource:(id)source;
+@end
+
+
 @interface TiDraggableGesture : TiProxy<TiProxyObserver, UIGestureRecognizerDelegate, TiAnimationDelegate>
 {
     CGPoint touchStart;
     CGPoint touchEnd;
     CGPoint lastAnimationPosition;
+    
+    BOOL isLognPressed;
 }
 
-- (id)initWithProxy:(TiViewProxy*)proxy andOptions:(NSDictionary*)options;
+- (id)initWithProxy:(TiViewProxy*)proxy andOptions:(NSDictionary *)options withDelegate:(id <TiDraggableGestureDelegate>)delegate;
 
 @property (nonatomic, assign) TiViewProxy* proxy;
 @property (nonatomic, retain) UIGestureRecognizer* gesture;
+@property (nonatomic, retain) id <TiDraggableGestureDelegate> delegate;
 
 typedef void (^CallbackBlock)(void);
 

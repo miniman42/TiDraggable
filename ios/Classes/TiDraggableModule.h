@@ -39,6 +39,8 @@
 #import "TiHost.h"
 #import "TiUtils.h"
 
-@interface TiDraggableModule : TiModule
+#import "TiDraggableGesture.h"
+
+@interface TiDraggableModule : TiModule <TiDraggableGestureDelegate>
 
 @end
