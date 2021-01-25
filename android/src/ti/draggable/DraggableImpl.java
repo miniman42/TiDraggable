@@ -66,6 +66,8 @@ public class DraggableImpl extends TiUIView {
 			{
 				case MotionEvent.ACTION_DOWN:
 					listener.startDrag(event);
+					listener.determineDrag(event);
+					break;
 				case MotionEvent.ACTION_MOVE:
 					listener.determineDrag(event);
 					break;
@@ -110,7 +112,7 @@ public class DraggableImpl extends TiUIView {
 
 		this.getLayoutParams().autoFillsHeight = true;
         this.getLayoutParams().autoFillsWidth = true;
-        this.listener = new DraggableGesture((TiViewProxy) proxy, this, weakConfig);
+        this.listener = new DraggableGesture(proxy, this, weakConfig);
 
 		this.getOuterView().setOnTouchListener(listener);
 
