@@ -10,4 +10,4 @@ name: draggable
 moduleid: ti.draggable
 guid: e8c13998-8fa8-4cee-8078-353c27e84d19
 platform: iphone
-minsdk: 9.3.1
+minsdk: 9.3.2
